@@ -115,7 +115,7 @@ class LambdaInput:
         assert self.mu_star is not None
 
 
-if __name__ == "__main__":
+def main():
     # Setup arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("input_file", action="store", help="The input file for lambda.x")
@@ -215,3 +215,7 @@ if __name__ == "__main__":
         plt.xlabel(r"$\omega$ (cm$^{-1}$)")
         plt.ylabel(r"$\alpha^2F(\omega)$")
         plt.show()
+
+
+if __name__ == "__main__":
+    main()

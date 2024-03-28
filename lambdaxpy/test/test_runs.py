@@ -1,9 +1,6 @@
 import os
 import numpy as np
 
-LAM_X_PY = os.path.join(os.path.dirname(os.path.dirname(__file__)), "lambda.x.py")
-assert os.path.isfile(LAM_X_PY)
-
 
 def compare_x_xpy(x_file: str, xpy_file: str):
     data = None
@@ -57,7 +54,7 @@ def run_directory(directory: str):
 
     try:
         # Run lambda.x.py
-        os.system(f"cd {directory} && python {LAM_X_PY} lambda.in > lambda.out")
+        os.system(f"cd {directory} && lambdaxpy lambda.in > lambda.out")
         os.system(f"cd {directory} && lambda.x < lambda.in > lambda.x.out")
 
         # Check output
@@ -74,4 +71,12 @@ def run_directory(directory: str):
 
 
 def test_mg2irh6():
-    run_directory("data/Mg2IrH6")
+    run_directory(os.path.join(os.path.dirname(__file__), "data", "Mg2IrH6"))
+
+
+def test_all_dirs():
+    root = os.path.join(os.path.dirname(__file__), "data")
+    for d in os.listdir(root):
+        d = os.path.join(root, d)
+        if os.path.isdir(d):
+            run_directory(d)
