@@ -222,7 +222,9 @@ def main():
     if args.plot_a2f:
         import matplotlib.pyplot as plt
 
-        plt.plot(omega, a2f[0, :])
+        for n in range(a2f.shape[0]):
+            plt.fill_between(omega, 0, a2f[n, :], color="red", alpha=0.1)
+
         plt.xlim([0, max(omega)])
         plt.xlabel(r"$\omega$ (cm$^{-1}$)")
         plt.ylabel(r"$\alpha^2F(\omega)$")
