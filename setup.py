@@ -7,7 +7,7 @@ setup(
     author='Michael Hutcheon',
     author_email='michael.hutcheon@hotmail.co.uk',
     packages=['lambdaxpy'],
-    install_requires=['numpy'],
+    install_requires=['numpy', 'pytest'],
     entry_points={
         "console_scripts": ["lambdaxpy = lambdaxpy.lambdaxpy:main"]
     }
