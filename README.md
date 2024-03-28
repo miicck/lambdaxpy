@@ -16,7 +16,7 @@ A replacement for the lambda.x program shipped with quantum espresso. Improvemen
 
 ![image](https://github.com/miicck/lambdaxpy/assets/8690175/3396470e-f99c-4a06-ab2b-f6564e9f4bd3)
 
-* Optional a2F plotting with --plot_a2f
+* Optional a2F plotting with --plot_a2f, including cumulative values for the above quantitites:
 
 ![image](https://github.com/miicck/lambdaxpy/assets/8690175/fa6798a0-2e14-4572-8136-6f79d4c1b3cf)
 
