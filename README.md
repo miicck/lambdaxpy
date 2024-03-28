@@ -1,14 +1,22 @@
 ## lambdaxpy
+
 A replacement for the lambda.x program shipped with quantum espresso. Improvements:
 
-* An analytic expression for omega_log is used. This means that the following results no longer depend on the smeared a2F function (and, therefore, the smearing parameters):
+* An analytic expression for omega_log is used (see below). This means that the following results no longer depend on the smeared a2F function (and, therefore, the smearing parameters):
   * lambda (this was already the case in lambda.x)
   * omega_log
   * The resulting Allen-Dynes Tc
+
+![image](https://github.com/miicck/lambdaxpy/assets/8690175/fa762527-8e6e-4060-8932-f6f0be6166ec)
+
 * Sensible paramters for smearing a2F are chosen automatically from the input phonon frequencies:
   * No need to specify a maximum a2F frequency
   * No need to specify a smearing width (although you can if you like)
 * Optional a2F plotting
+* Deals with some numerical instabilities in lambda.x (see blue lines below)
+
+![image](https://github.com/miicck/lambdaxpy/assets/8690175/3396470e-f99c-4a06-ab2b-f6564e9f4bd3)
+
 
 # Installation
 The following will install the python package, and run the tests
