@@ -6,7 +6,8 @@ import argparse
 # Constants
 RY_TO_CMM = 109736.75775046606
 RY_TO_K = 157887.6633481157
-THZ_TO_RY = 0.0003039657635040861
+RY_TO_THZ = 3289.8441866350436
+THZ_TO_RY = 1 / RY_TO_THZ
 
 
 class LambdaElphInput:
@@ -204,6 +205,12 @@ def main():
             for n in range(nsigma):  # Loop over double-delta smearing values
                 p = w * lams[n] / lambdas[n]  # \lambda_{qn} / \lambda
                 omega_logs[n] *= f ** p
+
+    # Create alpha2F.dat file
+    with open("alpha2F.dat", "w") as f:
+        f.write(f"{'# E(THz)':<10} " + " ".join(f"{x:>10.5f}" for x in deguass) + "\n")
+        for i, w in enumerate(omega):
+            f.write(f"{w * RY_TO_THZ:>10.5f} " + " ".join(f"{x:>10.5f}" for x in a2f[:, i]) + "\n")
 
     # Convert frequencies to cm^{-1}
     omega *= RY_TO_CMM
