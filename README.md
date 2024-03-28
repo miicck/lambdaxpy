@@ -26,4 +26,6 @@ Now do
 
     lambdaxpy lambda.in > lambda.out
 
+As was the case for lambda.x, this will also produce an alpha2F.dat file containing the eliashberg function at each degauss value.
+
 Note that the first line of lambda.in (containing parameters for lambda.x) is ignored - these parameters are worked out automatically where needed to smear a2F, and are unnecassary to evaluate lambda, omega_log and the Allen-Dynes Tc (see above).
