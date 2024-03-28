@@ -222,12 +222,15 @@ def main():
     if args.plot_a2f:
         import matplotlib.pyplot as plt
 
-        for n in range(a2f.shape[0]):
-            plt.fill_between(omega, 0, a2f[n, :], color="red", alpha=0.1)
+        for i in np.argsort(deguass):
+            c = i / (len(deguass) - 1)
+            c = (1 - c, c, 0)
+            plt.plot(omega, a2f[i, :], color=c, label=f"deguass = {deguass[i]}")
 
         plt.xlim([0, max(omega)])
         plt.xlabel(r"$\omega$ (cm$^{-1}$)")
         plt.ylabel(r"$\alpha^2F(\omega)$")
+        plt.legend()
         plt.show()
 
 
