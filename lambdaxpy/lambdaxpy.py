@@ -6,6 +6,7 @@ import argparse
 # Constants
 RY_TO_CMM = 109736.75775046606
 RY_TO_K = 157887.6633481157
+THZ_TO_RY = 0.0003039657635040861
 
 
 class LambdaElphInput:
@@ -118,8 +119,12 @@ class LambdaInput:
 def main():
     # Setup arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_file", action="store", help="The input file for lambda.x")
+    parser.add_argument("input_file", action="store",
+                        help="The input file for lambda.x. "
+                             "The first line is ignored - these parameters are worked out automatically.")
     parser.add_argument("--plot_a2f", action="store_true", help="Plot a2F(omega)")
+    parser.add_argument("--a2f_smearing", action="store", required=False,
+                        help="Manually specify the smearing width (in THz) used to evaluate a2F")
 
     # Parse arguments
     args = parser.parse_args()
@@ -147,6 +152,13 @@ def main():
     for l in lambda_input_files:
         all_freqs.extend(l.frequencies)
     smearing = np.mean(np.diff(sorted(all_freqs))) / 2.0
+
+    # Manual smearing width override
+    if args.a2f_smearing is not None:
+        try:
+            smearing = float(args.a2f_smearing) * THZ_TO_RY
+        except ValueError:
+            raise Exception(f"Could not parse smearing value from: '{args.a2f_smearing}'")
 
     # Generate frequency grid, initialize a2F and lambda arrays
     omega = np.linspace(0, max_freq + 10 * smearing, 10000)
