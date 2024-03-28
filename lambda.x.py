@@ -118,8 +118,8 @@ class LambdaInput:
 if __name__ == "__main__":
     # Setup arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_file", action="store")
-    parser.add_argument("--plot_a2f", action="store_true")
+    parser.add_argument("input_file", action="store", help="The input file for lambda.x")
+    parser.add_argument("--plot_a2f", action="store_true", help="Plot a2F(omega)")
 
     # Parse arguments
     args = parser.parse_args()

@@ -1,0 +1,11 @@
+100 0.25 0    ! emax (something more than highest phonon mode in THz), degauss, smearing method
+4
+0.00000000 0.00000000 0.00000000 1
+0.00000000 0.00000000 -0.61237244 1
+0.00000000 -0.57735027 0.20412415 3
+0.00000000 -0.57735027 -0.40824829 3
+elph_dir/elph.inp_lambda.1
+elph_dir/elph.inp_lambda.2
+elph_dir/elph.inp_lambda.3
+elph_dir/elph.inp_lambda.4
+0.125 !  \mu the Coloumb coefficient in the modified Allen-Dynes formula for T_c (via \omega_log)
