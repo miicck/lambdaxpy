@@ -1,32 +1,76 @@
 import os
+import numpy as np
 
 LAM_X_PY = os.path.join(os.path.dirname(os.path.dirname(__file__)), "lambda.x.py")
 assert os.path.isfile(LAM_X_PY)
 
 
+def compare_x_xpy(x_file: str, xpy_file: str):
+    data = None
+    deguass = []
+    nef = []
+    with open(x_file) as f:
+        for line in f:
+            split = line.split()
+            if split[1] == "=":
+                deguass.append(float(split[-1]))
+                nef.append(float(split[-4]))
+
+            if split == ["lambda", "omega_log", "T_c"]:
+                data = []
+                continue
+
+            if data is None:
+                continue
+
+            data.append([float(x) for x in split])
+
+    x_data = np.array(data).T
+
+    data = []
+    with open(xpy_file) as f:
+        for i, line in enumerate(f):
+            split = line.split()
+            if i > 0:
+                data.append([float(x) for x in split])
+
+    xpy_data = np.array(data).T
+
+    # Degauss should be exactly the same
+    assert np.allclose(deguass, xpy_data[0])
+
+    # N(Ef) should be exactly the same
+    assert np.allclose(nef, xpy_data[1])
+
+    # Lambda should be exactly the same, both codes use the analytic expression
+    assert np.allclose(x_data[0], xpy_data[2])
+
+    # Omega log should be close, lambda.x.py uses analytic, lambda.x uses smearing
+    assert np.allclose(x_data[1], xpy_data[3], rtol=0.01, atol=1e-5)
+
+    # Same goes for Tc
+    assert np.allclose(x_data[2], xpy_data[4], rtol=0.01, atol=1e-5)
+
+
 def run_directory(directory: str):
     assert os.path.isdir(directory)
-
-    # Check input is present, output is not
-    inp_file = os.path.join(directory, "lambda.in")
-    out_file = os.path.join(directory, "lambda.out")
-    assert os.path.isfile(inp_file)
-    assert not os.path.isfile(out_file)
 
     try:
         # Run lambda.x.py
         os.system(f"cd {directory} && python {LAM_X_PY} lambda.in > lambda.out")
+        os.system(f"cd {directory} && lambda.x < lambda.in > lambda.x.out")
 
         # Check output
-        with open(out_file) as f:
-            for line in f:
-                print(line.strip())
+        compare_x_xpy(os.path.join(directory, "lambda.x.out"),
+                      os.path.join(directory, "lambda.out"))
 
     finally:
 
         # Cleanup
-        if os.path.isfile(out_file):
-            os.remove(out_file)
+        for f in ["lambda.out", "lambda.x.out", "alpha2F.dat", "lambda.dat"]:
+            f = os.path.join(directory, f)
+            if os.path.isfile(f):
+                os.remove(f)
 
 
 def test_mg2irh6():
