@@ -49,12 +49,16 @@ def compare_x_xpy(x_file: str, xpy_file: str):
     assert np.allclose(x_data[2], xpy_data[4], rtol=0.01, atol=1e-5)
 
 
-def run_directory(directory: str):
+def run_directory(directory: str, manual_smearing: float = None):
     assert os.path.isdir(directory)
+
+    args = ""
+    if manual_smearing is not None:
+        args += f"--a2f_smearing {manual_smearing}"
 
     try:
         # Run lambda.x.py
-        os.system(f"cd {directory} && lambdaxpy lambda.in > lambda.out")
+        os.system(f"cd {directory} && lambdaxpy {args} lambda.in > lambda.out")
         os.system(f"cd {directory} && lambda.x < lambda.in > lambda.x.out")
 
         # Check output
@@ -80,3 +84,4 @@ def test_all_dirs():
         d = os.path.join(root, d)
         if os.path.isdir(d):
             run_directory(d)
+            run_directory(d, manual_smearing=1.0)
