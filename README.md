@@ -21,7 +21,7 @@ A replacement for the lambda.x program shipped with quantum espresso. Improvemen
 ![image](https://github.com/miicck/lambdaxpy/assets/8690175/fa6798a0-2e14-4572-8136-6f79d4c1b3cf)
 
 # Installation
-The following will install the python package, and run the tests
+Clone this repository and cd into the resulting directory. The following will install the python package, and run the tests
 
     ./install.sh
 
