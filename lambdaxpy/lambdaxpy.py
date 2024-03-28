@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Tuple
 import os
 import numpy as np
 import argparse
@@ -8,6 +8,7 @@ RY_TO_CMM = 109736.75775046606
 RY_TO_K = 157887.6633481157
 RY_TO_THZ = 3289.8441866350436
 THZ_TO_RY = 1 / RY_TO_THZ
+CMM_TO_K = 1.4387855681606843
 
 
 class LambdaElphInput:
@@ -229,15 +230,71 @@ def main():
     if args.plot_a2f:
         import matplotlib.pyplot as plt
 
-        for i in np.argsort(deguass):
-            c = i / (len(deguass) - 1)
+        deguass_colors = {}
+        for n in np.argsort(deguass):
+            c = n / (len(deguass) - 1)
             c = (1 - c, c, 0)
-            plt.plot(omega, a2f[i, :], color=c, label=f"deguass = {deguass[i]}")
+            deguass_colors[n] = c
 
-        plt.xlim([0, max(omega)])
-        plt.xlabel(r"$\omega$ (cm$^{-1}$)")
-        plt.ylabel(r"$\alpha^2F(\omega)$")
-        plt.legend()
+        plt.subplot(338)
+        ddg = deguass[1] - deguass[0]
+        for n, s in enumerate(deguass):
+            plt.axhline(s, color=deguass_colors[n])
+            plt.annotate(f"degauss = {s}", (0, s + ddg / 4))
+        plt.ylabel("degauss")
+        plt.ylim(min(deguass) - ddg, max(deguass) + ddg)
+        plt.axis("off")
+
+        for n in np.argsort(deguass):
+
+            plt.subplot(311)
+            plt.plot(omega, a2f[n, :], color=deguass_colors[n])
+            plt.xlim([0, max(omega)])
+            plt.xlabel(r"$\omega$ (cm$^{-1}$)")
+            plt.ylabel(r"$\alpha^2F(\omega)$")
+
+            def allen_dynes_exponent(lam: float) -> float:
+                denom = lam - input_file.mu_star * (1 + 0.62 * lam)
+                return np.exp(-1.04 * (1 + lam) / denom) if denom > 0 else 0.0
+
+            cum_lam = [0]
+            cum_omega_log_exp = [0]
+            cum_omega_log = [0]
+            cum_tc = [0]
+
+            for i in range(1, len(omega)):
+                # d omega for this integration rectangle
+                d_omega = omega[i] - omega[i - 1]
+
+                # averge a2f and omega values for this rectangle
+                a_av = (a2f[n, i] + a2f[n, i - 1]) / 2.0
+                w_av = (omega[i] + omega[i - 1]) / 2.0
+
+                # increment in lambda, expontential appearing in expression for omega log
+                d_lambda = 2 * d_omega * a_av / w_av
+                d_omega_log_exp = 2 * d_omega * np.log(w_av) * a_av / w_av
+
+                # Update cumulative values
+                cum_lam.append(cum_lam[-1] + d_lambda)
+                cum_omega_log_exp.append(cum_omega_log_exp[-1] + d_omega_log_exp)
+                cum_omega_log.append(CMM_TO_K * np.exp(cum_omega_log_exp[-1] / cum_lam[-1]))
+                cum_tc.append(cum_omega_log[-1] * allen_dynes_exponent(cum_lam[-1]) / 1.2)
+
+            plt.subplot(334)
+            plt.plot(omega, cum_lam, color=deguass_colors[n])
+            plt.xlabel(r"$\omega$ (cm$^{-1}$)")
+            plt.ylabel("Cumulative $\lambda$")
+
+            plt.subplot(335)
+            plt.plot(omega, cum_omega_log, color=deguass_colors[n])
+            plt.xlabel(r"$\omega$ (cm$^{-1}$)")
+            plt.ylabel("Cumulative $\omega_{log}$")
+
+            plt.subplot(336)
+            plt.plot(omega, cum_tc, color=deguass_colors[n])
+            plt.xlabel(r"$\omega$ (cm$^{-1}$)")
+            plt.ylabel("Cumulative $T_c$")
+
         plt.show()
 
 
