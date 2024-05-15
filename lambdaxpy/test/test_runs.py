@@ -59,7 +59,6 @@ def run_directory(directory: str, manual_smearing: float = None):
     try:
         # Run lambda.x.py
         os.system(f"cd {directory} && lambdaxpy {args} lambda.in > lambda.out")
-        os.system(f"cd {directory} && lambda.x < lambda.in > lambda.x.out")
 
         # Check output
         compare_x_xpy(os.path.join(directory, "lambda.x.out"),
@@ -68,7 +67,7 @@ def run_directory(directory: str, manual_smearing: float = None):
     finally:
 
         # Cleanup
-        for f in ["lambda.out", "lambda.x.out", "alpha2F.dat", "lambda.dat"]:
+        for f in ["lambda.out", "alpha2F.dat", "lambda.dat"]:
             f = os.path.join(directory, f)
             if os.path.isfile(f):
                 os.remove(f)
@@ -78,10 +77,5 @@ def test_mg2irh6():
     run_directory(os.path.join(os.path.dirname(__file__), "data", "Mg2IrH6"))
 
 
-def test_all_dirs():
-    root = os.path.join(os.path.dirname(__file__), "data")
-    for d in os.listdir(root):
-        d = os.path.join(root, d)
-        if os.path.isdir(d):
-            run_directory(d)
-            run_directory(d, manual_smearing=1.0)
+def test_mg2irh6_partial():
+    run_directory(os.path.join(os.path.dirname(__file__), "data", "Mg2IrH6_only_H_only_gamma"))

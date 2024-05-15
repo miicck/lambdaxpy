@@ -1,0 +1,4 @@
+This test comes from a calculation employing nat_todo to specify
+only calculation of the H atoms, as a result the dynamical matrix
+has spurious negative modes from the other (uncomputed) atoms. These
+should simply be ignored by the program.
