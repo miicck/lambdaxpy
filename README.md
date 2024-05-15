@@ -11,15 +11,17 @@ A replacement for the lambda.x program shipped with quantum espresso. Improvemen
 
 * Sensible paramters for smearing a2F are chosen automatically from the input phonon frequencies:
   * No need to specify a maximum a2F frequency
-  * No need to specify a smearing width (although you can if you like)
-* Optional a2F plotting
+  * No need to specify a smearing width (although you can if you like with --a2f_smearing)
 * Deals with some numerical instabilities in lambda.x (see blue lines below)
 
 ![image](https://github.com/miicck/lambdaxpy/assets/8690175/3396470e-f99c-4a06-ab2b-f6564e9f4bd3)
 
+* Optional a2F plotting with --plot_a2f, including cumulative values for the above quantitites:
+
+![image](https://github.com/miicck/lambdaxpy/assets/8690175/fa6798a0-2e14-4572-8136-6f79d4c1b3cf)
 
 # Installation
-The following will install the python package, and run the tests
+Clone this repository and cd into the resulting directory. The following will pip install the python package using the current python environment, and run the tests
 
     ./install.sh
 
