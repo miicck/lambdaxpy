@@ -186,6 +186,11 @@ def main():
         # Frequency, lambda values for each smearing at that frequency
         for f, lams in zip(l.frequencies, l.mode_lambdas):
 
+            if f < 1e-10:
+                # Ignore -ve, or zero, frequency contributions
+                # to lambda or eliashberg function
+                continue
+
             assert len(lams) == nsigma, \
                 f"Number of lambda values differ from number of deguass values in {l.filename}"
 
@@ -203,6 +208,12 @@ def main():
     omega_logs = np.ones((nsigma))  # Initialized to 1, as is evaluated using logarithmic mean
     for w, l in zip(weights, lambda_input_files):  # Loop over q-points
         for f, lams in zip(l.frequencies, l.mode_lambdas):  # Loop over frequencies
+
+            if f < 1e-10:
+                # Ignore -ve, or zero, frequency contributions
+                # to omega log
+                continue
+
             for n in range(nsigma):  # Loop over double-delta smearing values
                 p = w * lams[n] / lambdas[n]  # \lambda_{qn} / \lambda
                 omega_logs[n] *= f ** p
@@ -283,17 +294,17 @@ def main():
             plt.subplot(334)
             plt.plot(omega, cum_lam, color=deguass_colors[n])
             plt.xlabel(r"$\omega$ (cm$^{-1}$)")
-            plt.ylabel("Cumulative $\lambda$")
+            plt.ylabel(r"Cumulative $\lambda$")
 
             plt.subplot(335)
             plt.plot(omega, cum_omega_log, color=deguass_colors[n])
             plt.xlabel(r"$\omega$ (cm$^{-1}$)")
-            plt.ylabel("Cumulative $\omega_{log}$")
+            plt.ylabel(r"Cumulative $\omega_{log}$")
 
             plt.subplot(336)
             plt.plot(omega, cum_tc, color=deguass_colors[n])
             plt.xlabel(r"$\omega$ (cm$^{-1}$)")
-            plt.ylabel("Cumulative $T_c$")
+            plt.ylabel(r"Cumulative $T_c$")
 
         plt.show()
 
