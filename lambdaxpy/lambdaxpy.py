@@ -215,8 +215,12 @@ def main():
                 continue
 
             for n in range(nsigma):  # Loop over double-delta smearing values
-                p = w * lams[n] / lambdas[n]  # \lambda_{qn} / \lambda
-                omega_logs[n] *= f ** p
+                if lambdas[n] > 1e-10:
+                    p = w * lams[n] / lambdas[n]  # \lambda_{qn} / \lambda
+                    omega_logs[n] *= f ** p
+                else:
+                    # Total lambda is zero
+                    omega_logs[n] = 0.0
 
     # Create alpha2F.dat file
     with open("alpha2F.dat", "w") as f:
@@ -230,11 +234,14 @@ def main():
     # Convert omega log to K
     omega_logs *= RY_TO_K
 
+    def allen_dynes_exponent(lam: float) -> float:
+        denom = lam - input_file.mu_star * (1 + 0.62 * lam)
+        return np.exp(-1.04 * (1 + lam) / denom) if denom > 0 else 0.0
+
     # Print output
     print(f"{'degauss':>15} {'N(Ef)':>15} {'lambda':>15} {'omega_log':>15} {'T_c':>15}")
     for i in range(nsigma):
-        ad_exp = np.exp(-1.04 * (1 + lambdas[i]) / (lambdas[i] - input_file.mu_star * (1 + 0.62 * lambdas[i])))
-        tc = omega_logs[i] * ad_exp / 1.2
+        tc = omega_logs[i] * allen_dynes_exponent(lambdas[i]) / 1.2
         print(f"{deguass[i]:>15.8f} {dosef[i]:>15.8f} {lambdas[i]:>15.8f} {omega_logs[i]:>15.8f} {tc:>15.8f}")
 
     # Plot a2F if requested
@@ -263,10 +270,6 @@ def main():
             plt.xlim([0, max(omega)])
             plt.xlabel(r"$\omega$ (cm$^{-1}$)")
             plt.ylabel(r"$\alpha^2F(\omega)$")
-
-            def allen_dynes_exponent(lam: float) -> float:
-                denom = lam - input_file.mu_star * (1 + 0.62 * lam)
-                return np.exp(-1.04 * (1 + lam) / denom) if denom > 0 else 0.0
 
             cum_lam = [0]
             cum_omega_log_exp = [0]
