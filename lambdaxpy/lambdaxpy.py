@@ -127,6 +127,8 @@ def main():
     parser.add_argument("--plot_a2f", action="store_true", help="Plot a2F(omega)")
     parser.add_argument("--a2f_smearing", action="store", required=False,
                         help="Manually specify the smearing width (in THz) used to evaluate a2F")
+    parser.add_argument("--imitate_lambax_output", action="store_true",
+                        help="Imitate the output of lambda.x as closely as possible.")
 
     # Parse arguments
     args = parser.parse_args()
@@ -239,10 +241,21 @@ def main():
         return np.exp(-1.04 * (1 + lam) / denom) if denom > 0 else 0.0
 
     # Print output
-    print(f"{'degauss':>15} {'N(Ef)':>15} {'lambda':>15} {'omega_log':>15} {'T_c':>15}")
-    for i in range(nsigma):
-        tc = omega_logs[i] * allen_dynes_exponent(lambdas[i]) / 1.2
-        print(f"{deguass[i]:>15.8f} {dosef[i]:>15.8f} {lambdas[i]:>15.8f} {omega_logs[i]:>15.8f} {tc:>15.8f}")
+    if args.imitate_lambax_output:
+        for i in range(nsigma):
+            print(f"lambda = {lambdas[i]:<10.6f} ({lambdas[i]:>10.6f}) <log w>= {omega_logs[i]:10.3f} K  "
+                  f"N(Ef)= {dosef[i]:>12.6f} at degauss={deguass[i]:>8.3f}")
+        print("lambda        omega_log          T_c")
+        for i in range(nsigma):
+            tc = omega_logs[i] * allen_dynes_exponent(lambdas[i]) / 1.2
+            print(f"{lambdas[i]:>12.6f} {omega_logs[i]:>12.3f} {tc:>12.3f}")
+
+    else:
+        # Print cleaner table
+        print(f"{'degauss':>15} {'N(Ef)':>15} {'lambda':>15} {'omega_log':>15} {'T_c':>15}")
+        for i in range(nsigma):
+            tc = omega_logs[i] * allen_dynes_exponent(lambdas[i]) / 1.2
+            print(f"{deguass[i]:>15.8f} {dosef[i]:>15.8f} {lambdas[i]:>15.8f} {omega_logs[i]:>15.8f} {tc:>15.8f}")
 
     # Plot a2F if requested
     if args.plot_a2f:
