@@ -47,7 +47,7 @@ class LambdaElphInput:
                     continue
 
                 if line.startswith("DOS ="):
-                    self.dos_at_efs.append(float(split[2]))
+                    self.dos_at_efs.append(float(line.split("=")[1].split("states")[0]))
                     self.efs.append(float(split[-2]))
                     i_next_modes = i + 1
                     continue
